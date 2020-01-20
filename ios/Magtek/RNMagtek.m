@@ -63,7 +63,9 @@ RCT_EXPORT_MODULE();
     [self sendEventWithName:@"onDataReceived" body:data];
 }
 
-RCT_EXPORT_METHOD(connect:(RCTResponseSenderBlock)callback) {
+RCT_REMAP_METHOD(connect,
+                 connectWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
     // Init MTSCRA lib
     if (self.lib == nil) {
         self.lib = [MTSCRA new];
@@ -87,7 +89,26 @@ RCT_EXPORT_METHOD(connect:(RCTResponseSenderBlock)callback) {
         MPMusicPlayerController *musicPlayer = [MPMusicPlayerController applicationMusicPlayer];
         musicPlayer.volume = 1.0f;
     }
-    callback(@[@{@"isDeviceOpenend": @([self.lib isDeviceOpened]), @"isDeviceConnected": @([self.lib isDeviceConnected])}]);
+    resolve(@[@{@"isDeviceOpenend": @([self.lib isDeviceOpened]), @"isDeviceConnected": @([self.lib isDeviceConnected])}]);
+}
+
+RCT_REMAP_METHOD(disconnect,
+                 disconnectWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+    // Close MTSCRA lib
+
+    if (self.lib != nil && self.lib.isDeviceOpened) {
+        [self.lib closeDevice];
+    }
+
+    self.lib = nil;
+
+//    if (self.lib.getDeviceType == MAGTEKAUDIOREADER) {
+//        MPMusicPlayerController *musicPlayer = [MPMusicPlayerController applicationMusicPlayer];
+//        musicPlayer.volume = 1.0f;
+//    }
+
+    resolve(@[@{@"isDeviceOpened": @true}]);
 }
 
 @end

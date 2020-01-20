@@ -5,13 +5,14 @@
 #endif
 
 #import <React/RCTEventEmitter.h>
-#import "Magtek/MTSCRA.h"
+#import "MTSCRA.h"
 
 @interface RNMagtek : RCTEventEmitter <RCTBridgeModule, MTSCRAEventDelegate>
 
 @property(nonatomic, strong) MTSCRA *lib;
 
-- (void) connect:(RCTResponseSenderBlock)callback;
+- (void) connect;
+- (void) disconnect;
 
 - (void) devConnStatusChange;
 - (void) onDeviceConnectionDidChange:(MTSCRADeviceType)deviceType connected:(BOOL)connected instance:(id)instance;
